@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "secrets1": {
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.KeyVault/vaults/msc-key-vault-poc",
+      "type": "secrets.keyVault",
+      "connectionId": "VaultUri",
+      "secretStore": null
+    }
+  }
+}
