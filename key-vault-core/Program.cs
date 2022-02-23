@@ -44,11 +44,10 @@ namespace key_vault_core
                             config.AddAzureAppConfiguration(options =>
                             {
                                 options.Connect(cnstring)
-                                    //.ConfigureKeyVault(kv =>
-                                    //{
-                                    //    kv.SetCredential(new DefaultAzureCredential());
-                                    //})
-                                    ;
+                                    .ConfigureKeyVault(kv =>
+                                    {
+                                        kv.SetCredential(new DefaultAzureCredential());
+                                    });
                             });
                         })
                         .UseStartup<Startup>());
