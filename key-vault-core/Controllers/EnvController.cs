@@ -12,8 +12,10 @@ namespace key_vault_core.Controllers
     [Route("[controller]")]
     public class EnvController : ControllerBase
     {
-        private readonly SettingsGroup _appSettings;
-        public EnvController(IOptions<SettingsGroup> appSettings)
+        private readonly SettingsGroup _appSettings; 
+
+        // do not use IOptions<SettingsGroup> : it  does not get thre changed values 
+        public EnvController(IOptionsSnapshot<SettingsGroup> appSettings)
         {
             _appSettings = appSettings.Value;
         }

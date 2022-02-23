@@ -47,7 +47,12 @@ namespace key_vault_core
                                     .ConfigureKeyVault(kv =>
                                     {
                                         kv.SetCredential(new DefaultAzureCredential());
+                                    }).ConfigureRefresh(refresh =>
+                                    {
+                                        refresh.Register("SettingsGroup:Sentinel", refreshAll: true)
+                                               .SetCacheExpiration(TimeSpan.FromSeconds(10));
                                     });
+
                             });
                         })
                         .UseStartup<Startup>());

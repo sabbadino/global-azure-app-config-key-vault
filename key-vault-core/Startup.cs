@@ -34,23 +34,33 @@ namespace key_vault_core
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "key_vault_core", Version = "v1" });
             });
+            // to register IConfigurationRefresherProvider 
+            // reuired for app.UseAzureAppConfiguration();
+            services.AddAzureAppConfiguration();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
            
-                app.UseDeveloperExceptionPage();
+
+            app.UseDeveloperExceptionPage();
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "key_vault_core v1"));
            
 
             app.UseHttpsRedirection();
 
+            // to enable value refresh (see CreateHostBuilder.AddAzureAppConfiguration.ConfigureRefresh 
+            // on each incoming request, ti will check if cache is expired, and if it's the case, il will query the sentinel key
+            app.UseAzureAppConfiguration();
+
+
             app.UseRouting();
 
             app.UseAuthorization();
 
+          
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
