@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace key_vault_core
 {
-    public class Startup
+    public class Startup 
     {
         public Startup(IConfiguration configuration)
         {
@@ -26,8 +26,8 @@ namespace key_vault_core
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            var section = Configuration.GetSection("AppSettings");
-            services.Configure<AppSettings>(section);
+            var section = Configuration.GetSection("SettingsGroup");
+            services.Configure<SettingsGroup>(section);
 
             services.AddControllers();
             services.AddSwaggerGen(c =>

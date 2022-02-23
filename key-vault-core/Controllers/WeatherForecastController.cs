@@ -12,15 +12,15 @@ namespace key_vault_core.Controllers
     [Route("[controller]")]
     public class EnvController : ControllerBase
     {
-        private readonly AppSettings _appSettings;
-        public EnvController(IOptions<AppSettings> appSettings)
+        private readonly SettingsGroup _appSettings;
+        public EnvController(IOptions<SettingsGroup> appSettings)
         {
             _appSettings = appSettings.Value;
         }
 
      
         [HttpGet("envs")]
-        public AppSettings GetEnvs()
+        public SettingsGroup GetEnvs()
         {
             return _appSettings;
         }
