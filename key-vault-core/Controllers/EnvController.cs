@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
+using Microsoft.FeatureManagement;
 
 namespace key_vault_core.Controllers
 {
@@ -12,12 +13,14 @@ namespace key_vault_core.Controllers
     [Route("[controller]")]
     public class EnvController : ControllerBase
     {
-        private readonly SettingsGroup _appSettings; 
+        private readonly SettingsGroup _appSettings;
+        private readonly IFeatureManager _featureManager;
 
         // do not use IOptions<SettingsGroup> : it  does not get thre changed values 
-        public EnvController(IOptionsSnapshot<SettingsGroup> appSettings)
+        public EnvController(IOptionsSnapshot<SettingsGroup> appSettings, IFeatureManager featureManager)
         {
             _appSettings = appSettings.Value;
+            _featureManager = featureManager;
         }
 
      
@@ -25,6 +28,12 @@ namespace key_vault_core.Controllers
         public SettingsGroup GetEnvs()
         {
             return _appSettings;
+        }
+
+        [HttpGet("features")]
+        public bool Features()
+        {
+            return _featureManager.IsEnabledAsync("feature1").Result;
         }
     }
 }

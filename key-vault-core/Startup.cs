@@ -39,8 +39,9 @@ namespace key_vault_core
             // reuired for app.UseAzureAppConfiguration();
             services.AddAzureAppConfiguration();
 
-            services.AddFeatureManagement()
-           .AddFeatureFilter<ClaimsFeatureFilter>(); // add our custom filter
+            services.AddFeatureManagement().AddFeatureFilter<ClaimsFeatureFilter>(); // add our custom filter
+
+            services.AddHttpContextAccessor();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
