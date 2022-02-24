@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Azure.Extensions.AspNetCore.Configuration.Secrets;
 using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
+using Microsoft.Extensions.Configuration.AzureAppConfiguration;
 
 namespace key_vault_core
 {
@@ -19,6 +20,7 @@ namespace key_vault_core
             CreateHostBuilder(args).Build().Run();
         }
 
+        // KEY VAULT ONLY
         //public static IHostBuilder CreateHostBuilder(string[] args) =>
         //    Host.CreateDefaultBuilder(args)
         //        .ConfigureAppConfiguration((context, config) =>
@@ -34,16 +36,25 @@ namespace key_vault_core
         //                new DefaultAzureCredential(), new PrefixKeyVaultSecretManager(versionPrefix));
         //        })
         //        .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });
+
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                     webBuilder.ConfigureAppConfiguration((hostingContext, config) =>
                         {
                             var settings = config.Build();
+#if DEBUG
                             var cnstring = settings["appConfigurationConnectionString"];
+#else 
+                            var cnstring = settings["appConfigurationEndpoint"];
+#endif
                             config.AddAzureAppConfiguration(options =>
                             {
+#if DEBUG
                                 options.Connect(cnstring)
+#else
+                                options.Connect(new Uri(cnstring), new ManagedIdentityCredential())
+#endif
                                     .ConfigureKeyVault(kv =>
                                     {
                                         kv.SetCredential(new DefaultAzureCredential());
@@ -51,9 +62,14 @@ namespace key_vault_core
                                     {
                                         refresh.Register("SettingsGroup:Sentinel", refreshAll: true)
                                                .SetCacheExpiration(TimeSpan.FromSeconds(10));
-                                    });
+                                    })
+                                    .UseFeatureFlags()
+                                    //.Select(KeyFilter.Any, LabelFilter.Null)
+                                    //.Select(KeyFilter.Any, "Development");
+                            
+                                ;
 
-                            });
+                            },optional:false);
                         })
                         .UseStartup<Startup>());
     }
