@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using Microsoft.FeatureManagement;
+using Microsoft.FeatureManagement.Mvc;
 
 namespace key_vault_core.Controllers
 {
@@ -32,6 +33,13 @@ namespace key_vault_core.Controllers
 
         [HttpGet("features")]
         public bool Features()
+        {
+            return _featureManager.IsEnabledAsync("feature1").Result;
+        }
+
+        [FeatureGate("feature1")]
+        [HttpGet("feature1")]
+        public bool feature1()
         {
             return _featureManager.IsEnabledAsync("feature1").Result;
         }
