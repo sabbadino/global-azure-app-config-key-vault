@@ -63,10 +63,14 @@ namespace key_vault_core
                                         refresh.Register("SettingsGroup:Sentinel", refreshAll: true)
                                                .SetCacheExpiration(TimeSpan.FromSeconds(10));
                                     })
-                                    .UseFeatureFlags()
-                                    //.Select(KeyFilter.Any, LabelFilter.Null)
-                                    //.Select(KeyFilter.Any, "Development");
-                            
+                                    .UseFeatureFlags(op =>
+                                    {
+                                        op.Select("feature*"); // to filter on fetaure flags
+                                    })
+
+                                    .Select("SettingsGroup:*", LabelFilter.Null)
+                                //.Select(KeyFilter.Any, LabelFilter.Null)
+                                //.Select(KeyFilter.Any, "DEvelopmente);
                                 ;
 
                             },optional:false);

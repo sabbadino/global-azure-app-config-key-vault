@@ -1,0 +1,1 @@
+https://msc-web-app-session.azurewebsites.net/swagger/index.html
