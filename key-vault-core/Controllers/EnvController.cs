@@ -15,13 +15,11 @@ namespace key_vault_core.Controllers
     public class EnvController : ControllerBase
     {
         private readonly SettingsGroup _appSettings;
-        private readonly IFeatureManager _featureManager;
 
-        // do not use IOptions<SettingsGroup> : it  does not get thre changed values 
-        public EnvController(IOptionsSnapshot<SettingsGroup> appSettings, IFeatureManager featureManager)
+        // IMPORTANT do not use IOptions<SettingsGroup> : it  does not get the changed values 
+        public EnvController(IOptionsSnapshot<SettingsGroup> appSettings)
         {
             _appSettings = appSettings.Value;
-            _featureManager = featureManager;
         }
 
      
@@ -31,17 +29,6 @@ namespace key_vault_core.Controllers
             return _appSettings;
         }
 
-        [HttpGet("features")]
-        public bool Features()
-        {
-            return _featureManager.IsEnabledAsync("feature1").Result;
-        }
-
-        [FeatureGate("feature1")]
-        [HttpGet("feature1")]
-        public bool feature1()
-        {
-            return _featureManager.IsEnabledAsync("feature1").Result;
-        }
+      
     }
 }

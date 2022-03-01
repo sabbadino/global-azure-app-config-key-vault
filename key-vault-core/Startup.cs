@@ -36,10 +36,10 @@ namespace key_vault_core
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "key_vault_core", Version = "v1" });
             });
             // to register IConfigurationRefresherProvider 
-            // reuired for app.UseAzureAppConfiguration();
+            // required for app.UseAzureAppConfiguration();
             services.AddAzureAppConfiguration();
 
-            services.AddFeatureManagement().AddFeatureFilter<ClaimsFeatureFilter>(); // add our custom filter
+           
 
             services.AddHttpContextAccessor();
         }

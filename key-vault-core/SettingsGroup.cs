@@ -16,7 +16,7 @@ public class SettingsGroup
         public string Key1 { get; set; }
         public SomeJSon Key2 { get; set; }
 
-        public string Key3 { get; set; }
+      
     }
 
     public class SomeJSon
