@@ -68,7 +68,7 @@ namespace key_vault_core
                                         op.Select("feature*"); // to filter on fetaure flags
                                     })
 
-                                    .Select("SettingsGroup:*", LabelFilter.Null)
+                                    //.Select("SettingsGroup:*", LabelFilter.Null)
                                 //.Select(KeyFilter.Any, LabelFilter.Null)
                                 //.Select(KeyFilter.Any, "DEvelopmente);
                                 ;
