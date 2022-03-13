@@ -28,6 +28,14 @@ steps:
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
 
+- task: CopyFiles@2
+  inputs:
+    SourceFolder: 'akv-data\'
+    Contents: '**'
+    TargetFolder: '$(build.artifactStagingDirectory)/akv'
+    CleanTargetFolder: true
+    OverWrite: true    
+  
 - task: PublishBuildArtifacts@1
   inputs:
     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
