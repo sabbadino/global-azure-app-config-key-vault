@@ -43,6 +43,8 @@ namespace key_vault_core
                     webBuilder.ConfigureAppConfiguration((hostingContext, config) =>
                         {
                             var settings = config.Build();
+                            var oriSettings = new List<IConfigurationSource>(config.Sources);
+                            config.Sources.Clear();
 #if DEBUG
                             var cnstring = settings["appConfigurationConnectionString"];
 #else 
@@ -74,6 +76,11 @@ namespace key_vault_core
                                 ;
 
                             },optional:false);
+
+                            oriSettings.ForEach(s=>
+                            {
+                                config.Add(s);
+                            });
                         })
                         .UseStartup<Startup>());
     }
