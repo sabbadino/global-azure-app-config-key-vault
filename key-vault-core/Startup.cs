@@ -57,7 +57,7 @@ namespace key_vault_core
             app.UseHttpsRedirection();
 
             // to enable value refresh (see CreateHostBuilder.AddAzureAppConfiguration.ConfigureRefresh 
-            // on each incoming request, ti will check if cache is expired, and if it's the case, il will query the sentinel key
+            // on each incoming request, it will check if cache is expired, and if it's the case, il will query the sentinel key
             app.UseAzureAppConfiguration();
 
 
