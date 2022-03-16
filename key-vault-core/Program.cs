@@ -68,13 +68,7 @@ namespace key_vault_core
                                     .UseFeatureFlags(op =>
                                     {
                                         op.Select("feature*"); // to filter on fetaure flags
-                                    })
-
-                                    //.Select("SettingsGroup:*", LabelFilter.Null)
-                                //.Select(KeyFilter.Any, LabelFilter.Null)
-                                //.Select(KeyFilter.Any, "DEvelopmente);
-                                ;
-
+                                    });
                             },optional:false);
 
                             oriSettings.ForEach(s=>
