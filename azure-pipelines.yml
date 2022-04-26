@@ -3,8 +3,12 @@
 # Add steps that publish symbols, save build artifacts, and more:
 # https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
 
-trigger:
-- main
+ branches:
+   include:
+     - app-config-refresh
+ paths:
+   include:
+     - key-vault-core
 
 pool:
   vmImage: 'windows-2022'
