@@ -3,10 +3,11 @@
 # Add steps that publish symbols, save build artifacts, and more:
 # https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
 
- branches:
+trigger:
+  branches:
    include:
      - app-config-refresh
- paths:
+  paths:
    include:
      - key-vault-core
 
