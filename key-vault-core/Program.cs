@@ -28,19 +28,22 @@ namespace key_vault_core
                     webBuilder.ConfigureAppConfiguration((hostingContext, config) =>
                         {
                             var settings = config.Build();
-
-                            var cnstring = settings["appConfigurationConnectionString"];
-
+                            var cnstring = settings["appConfigurationEndpoint"];
                             config.AddAzureAppConfiguration(options =>
                             {
-
-                                options.Connect(cnstring)
-                                // ignore this for the moment
-                                    .ConfigureKeyVault(kv =>
-                                    {
-                                        kv.SetCredential(new DefaultAzureCredential());
-                                    })
-                                    // ignore this for the moment
+#if DEBUG
+                                options.Connect(new Uri(cnstring), new InteractiveBrowserCredential())
+#else
+                                options.Connect(new Uri(cnstring), new ManagedIdentityCredential())
+#endif
+                                     .ConfigureKeyVault(kv =>
+                                     {
+#if DEBUG
+                                         kv.SetCredential(new InteractiveBrowserCredential());
+#else
+                                         kv.SetCredential(new ManagedIdentityCredential());
+#endif
+                                     })
                                     .ConfigureRefresh(refresh =>
                                     {
                                         refresh.Register("SettingsGroup:Sentinel", refreshAll: true)

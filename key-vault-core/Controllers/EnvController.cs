@@ -7,28 +7,36 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using Microsoft.FeatureManagement;
 using Microsoft.FeatureManagement.Mvc;
+using Microsoft.AspNetCore.Hosting;
 
 namespace key_vault_core.Controllers
 {
-   [ApiController]
+    [ApiController]
     [Route("[controller]")]
     public class EnvController : ControllerBase
     {
         private readonly SettingsGroup _appSettings;
+        private readonly IWebHostEnvironment _hostingEnvironment;
 
-        // IMPORTANT do not use IOptions<SettingsGroup> : it  does not get the changed values 
-        public EnvController(IOptionsSnapshot<SettingsGroup> appSettings)
+        public EnvController(IOptions<SettingsGroup> appSettings, IWebHostEnvironment hostingEnvironment)
         {
             _appSettings = appSettings.Value;
+            _hostingEnvironment = hostingEnvironment;
         }
 
-     
+
         [HttpGet("envs")]
-        public SettingsGroup GetEnvs()
+        public GetEnvsResponse GetEnvs()
         {
-            return _appSettings;
+            return new GetEnvsResponse { Environment = _hostingEnvironment.EnvironmentName, Settings = _appSettings };
         }
 
-      
+
+    }
+
+    public class GetEnvsResponse
+    {
+        public string Environment { get; set; }
+        public SettingsGroup Settings { get; set; }
     }
 }
