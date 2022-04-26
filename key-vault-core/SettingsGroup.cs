@@ -14,6 +14,9 @@ namespace key_vault_core
 
         public string FromAppLocalSecret { get; set; }
         public string FromAkv { get; set; }
+
+        public string FromAkvEncryptedInGit { get; set; }
+
         public string FromAppSettingsFile { get; set; }
         public string FromAppConfigurationSimple { get; set; }
         public ComplexData FromAppConfigurationComplex { get; set; }

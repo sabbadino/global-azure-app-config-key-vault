@@ -41,7 +41,7 @@ function RemoveMissingSecrets ([bool] $removeMissingSecrets, [bool] $whatif) {
 function DecryptIfRequired () {
 	if($_.isEncrypted -ceq "true" -or $configurationNode.isEncrypted -ceq "true") {
 		write-host value for $keyInxml is encrypted with value $valueInxml
-		$y= az keyvault key decrypt --name myMscKeyForSecrets --vault-name $keyVaultName --value $valueInxml --data-type plaintext --algorithm RSA-OAEP | ConvertFrom-Json
+		$y= az keyvault key decrypt --name KeyForSecrets --vault-name $keyVaultName --value $valueInxml --data-type plaintext --algorithm RSA-OAEP | ConvertFrom-Json
 		if (!$?) {
 				Write-Error "Error calling az keyvault key decrypt"
 				exit -1
