@@ -29,6 +29,10 @@ namespace key_vault_core
                         {
                             var settings = config.Build();
                             var cnstring = settings["appConfigurationEndpoint"];
+                            int appConfigRefreshInSeconds;
+                            if(!int.TryParse(settings["app-config-refresh-in-seconds"], out appConfigRefreshInSeconds)) {
+                                appConfigRefreshInSeconds = 15;
+                            }
                             config.AddAzureAppConfiguration(options =>
                             {
 #if DEBUG
@@ -62,7 +66,7 @@ namespace key_vault_core
                                     .ConfigureRefresh(refresh =>
                                     {
                                         refresh.Register("Sentinel", refreshAll: true)
-                                               .SetCacheExpiration(TimeSpan.FromSeconds(10));
+                                               .SetCacheExpiration(TimeSpan.FromSeconds(appConfigRefreshInSeconds));
                                     })
 
                                 ;

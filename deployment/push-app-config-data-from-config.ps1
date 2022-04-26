@@ -37,7 +37,7 @@ function RemoveMissingKyes ([bool] $removeMissingKeys, [bool] $whatif) {
 		}
 	}
 }
-$somethingChanged=$False
+
 [xml]$xmlSettings = Get-Content -Path $configPath
 	$xmlSettings.SelectNodes('/configuration/add') | ForEach-Object {
 	$keyInxml = $_.key;
@@ -57,10 +57,19 @@ $somethingChanged=$False
 		$valueInxml = " "
 	}
 	
-	if ($key -ne $null -and $key.value -ceq $valueInxml) {
+	$valueInxmlCleaned = $valueInxml
+	if($_.contentType -eq "application/json") {
+		$valueInxmlCleaned = $valueInxml.replace('\','')
+	}
+	if($_.isKeyVaultRef -eq "true") {
+		$secretIdentifier = $_.secretIdentifier
+		$valueInxmlCleaned = "{`"uri`":`"$secretIdentifier`"}"
+	}
+	if ($key -ne $null -and $key.value -ceq $valueInxmlCleaned) {
 		write-host value of key $keyInxml not changed. SKIPPING 
 	}
 	else {
+		write-host value of key $keyInxml changed. CHANGED  : in app conf:  $key.value in config file : $valueInxmlCleaned
 		if($whatif -eq $False) {
 			write-Host adding/updating key $keyInxml 
 			if($null -eq $_.contentType) {
@@ -99,8 +108,8 @@ $somethingChanged=$False
 Write-Host RemoveMissingKyes $removeMissingKeys
 RemoveMissingKyes $removeMissingKeys $whatif
 
-if($somethingChanged -eq $True) {
-	Write-Host UPDATING Sentinel Key
-	az appconfig kv set  --name $appConfigName --key  "Sentinel" --value (Get-Date -Format yyyy-MM-dd-HH:mm:ss.fff) --yes
-}
+# i could keep track if something has chnaged and do not chnage sentinel value to triggere refresh, but I don't know if akv values that are referenced have been changed 
+Write-Host UPDATING Sentinel Key
+az appconfig kv set  --name $appConfigName --key  "Sentinel" --value (Get-Date -Format yyyy-MM-dd-HH:mm:ss.fff) --yes
+
 

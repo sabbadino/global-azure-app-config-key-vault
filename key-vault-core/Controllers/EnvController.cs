@@ -8,6 +8,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.FeatureManagement;
 using Microsoft.FeatureManagement.Mvc;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 
 namespace key_vault_core.Controllers
 {
@@ -17,18 +18,25 @@ namespace key_vault_core.Controllers
     {
         private readonly SettingsGroup _appSettings;
         private readonly IWebHostEnvironment _hostingEnvironment;
+        private readonly IConfiguration _configuration;
 
-        public EnvController(IOptions<SettingsGroup> appSettings, IWebHostEnvironment hostingEnvironment)
+        public EnvController(IOptionsSnapshot<SettingsGroup> appSettings, IWebHostEnvironment hostingEnvironment, IConfiguration configuration)
         {
             _appSettings = appSettings.Value;
             _hostingEnvironment = hostingEnvironment;
+            _configuration = configuration;
         }
 
 
         [HttpGet("envs")]
         public GetEnvsResponse GetEnvs()
         {
-            return new GetEnvsResponse { Environment = _hostingEnvironment.EnvironmentName, Settings = _appSettings };
+            int appConfigRefreshInSeconds;
+            if (!int.TryParse(_configuration["app-config-refresh-in-seconds"], out appConfigRefreshInSeconds))
+            {
+                appConfigRefreshInSeconds = 15;
+            }
+            return new GetEnvsResponse { RefreshInSeconds= appConfigRefreshInSeconds, Sentinel = _configuration["Sentinel"] , Environment = _hostingEnvironment.EnvironmentName, Settings = _appSettings };
         }
 
 
@@ -36,6 +44,8 @@ namespace key_vault_core.Controllers
 
     public class GetEnvsResponse
     {
+        public int RefreshInSeconds { get; set; }
+        public string Sentinel { get; set; }
         public string Environment { get; set; }
         public SettingsGroup Settings { get; set; }
     }
