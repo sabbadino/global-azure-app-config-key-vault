@@ -6,11 +6,11 @@
 
 trigger:
   branches:
-   include:
-     - app-config-refresh
+    include:
+      - app-config-refresh
   paths:
-   include:
-     - key-vault-core
+    include:
+      - key-vault-core
 
 pool:
   vmImage: 'windows-2022'
