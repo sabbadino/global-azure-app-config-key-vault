@@ -43,16 +43,31 @@ namespace key_vault_core
 #else
                                          kv.SetCredential(new ManagedIdentityCredential());
 #endif
+
+                                         // this is supopsed to  work in all scenarios if you are logged in the same tenant where app configuration / akv is 
+                                         //https://docs.microsoft.com/en-us/dotnet/api/azure.identity.defaultazurecredential?view=azure-dotnet
+                                         //                                The following credential types if enabled will be tried, in order:
+                                         //                                  EnvironmentCredential
+                                         //                                  ManagedIdentityCredential
+                                         //                                  SharedTokenCacheCredential
+                                         //                                  VisualStudioCredential
+                                         //                                  VisualStudioCodeCredential
+                                         //                                  AzureCliCredential
+                                         //                                  AzurePowerShellCredential
+                                         //                                  InteractiveBrowserCredential
+                                         //options.Connect(new Uri(cnstring), new DefaultAzureCredential())
+
+
                                      })
                                     .ConfigureRefresh(refresh =>
                                     {
-                                        refresh.Register("SettingsGroup:Sentinel", refreshAll: true)
+                                        refresh.Register("Sentinel", refreshAll: true)
                                                .SetCacheExpiration(TimeSpan.FromSeconds(10));
                                     })
-                                   
+
                                 ;
 
-                            },optional:false);
+                            }, optional: false);
                         })
                         .UseStartup<Startup>());
     }
