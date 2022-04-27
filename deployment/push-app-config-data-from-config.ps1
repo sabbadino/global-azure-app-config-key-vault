@@ -14,6 +14,9 @@ function RemoveMissingKyes ([bool] $removeMissingKeys, [bool] $whatif) {
 	$keyList = $(az appconfig kv list --all --name $appConfigName) | ConvertFrom-Json
 	foreach ($key in $keyList) {
 		$keyName = $key.key
+		if($keyName -eq "Sentinel") { 
+			  continue
+		}
 		Write-Host searching key $keyName
 		$resSettings = $xmlSettings | Select-XML -XPath "/configuration/add[@key='$keyName']"
 		if ($null -eq $resSettings) {
