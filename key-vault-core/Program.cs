@@ -36,19 +36,19 @@ namespace key_vault_core
                             config.AddAzureAppConfiguration(options =>
                             {
 #if DEBUG
-                                options.Connect(new Uri(cnstring), new InteractiveBrowserCredential())
+                                options.Connect(new Uri(cnstring), new DefaultAzureCredential())
 #else
                                 options.Connect(new Uri(cnstring), new ManagedIdentityCredential())
 #endif
                                      .ConfigureKeyVault(kv =>
                                      {
 #if DEBUG
-                                         kv.SetCredential(new InteractiveBrowserCredential());
+                                         kv.SetCredential(new DefaultAzureCredential());
 #else
                                          kv.SetCredential(new ManagedIdentityCredential());
 #endif
 
-                                         // this is supopsed to  work in all scenarios if you are logged in the same tenant where app configuration / akv is 
+                                         // this is supopsed to  work in all scenarios 
                                          //https://docs.microsoft.com/en-us/dotnet/api/azure.identity.defaultazurecredential?view=azure-dotnet
                                          //                                The following credential types if enabled will be tried, in order:
                                          //                                  EnvironmentCredential
