@@ -20,22 +20,7 @@ namespace key_vault_core
             CreateHostBuilder(args).Build().Run();
         }
 
-        // KEY VAULT ONLY
-        //public static IHostBuilder CreateHostBuilder(string[] args) =>
-        //    Host.CreateDefaultBuilder(args)
-        //        .ConfigureAppConfiguration((context, config) =>
-        //        {
-        //            var versionPrefix = context.HostingEnvironment.EnvironmentName;
-        //            var settings = config.Build();
-        //            var keyVaultUrl = settings.GetValue<string>("keyVaultUrl");
-        //            var keyVaultEndpoint = new Uri(keyVaultUrl);
-
-        //            config.AddAzureKeyVault(
-        //                keyVaultEndpoint,
-        //                // new DefaultAzureCredential(),   new AzureKeyVaultConfigurationOptions  { ReloadInterval =new TimeSpan(1,0,0)});
-        //                new DefaultAzureCredential(), new PrefixKeyVaultSecretManager(versionPrefix));
-        //        })
-        //        .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });
+      
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
