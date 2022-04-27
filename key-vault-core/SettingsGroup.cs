@@ -7,25 +7,24 @@ namespace key_vault_core
 {
 
 
-    public class Item {
-        public string Value{ get; set; }
-    }
 
-public class SettingsGroup
+
+    public class SettingsGroup
     {
-        public string Sentinel { get; set; }
 
-        public List<Item> Items { get; set; } = new List<Item>();
+        public string FromAppLocalSecret { get; set; }
+        public string FromAkv { get; set; }
 
-        public string Key1 { get; set; }
-        public SomeJSon Key2 { get; set; }
+        public string FromAkvEncryptedInGit { get; set; }
 
-        public string Key3 { get; set; }
+        public string FromAppSettingsFile { get; set; }
+        public string FromAppConfigurationSimple { get; set; }
+        public ComplexData FromAppConfigurationComplex { get; set; }
 
-        public string KeyA { get; set; }
+
     }
 
-    public class SomeJSon
+    public class ComplexData
     {
         public int FontSize { get; set; }
         public bool UseDefaultRouting { get; set; }

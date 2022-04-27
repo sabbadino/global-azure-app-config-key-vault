@@ -7,41 +7,46 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using Microsoft.FeatureManagement;
 using Microsoft.FeatureManagement.Mvc;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 
 namespace key_vault_core.Controllers
 {
-   [ApiController]
+    [ApiController]
     [Route("[controller]")]
     public class EnvController : ControllerBase
     {
         private readonly SettingsGroup _appSettings;
-        private readonly IFeatureManager _featureManager;
+        private readonly IWebHostEnvironment _hostingEnvironment;
+        private readonly IConfiguration _configuration;
 
-        // do not use IOptions<SettingsGroup> : it  does not get thre changed values 
-        public EnvController(IOptionsSnapshot<SettingsGroup> appSettings, IFeatureManager featureManager)
+        public EnvController(IOptionsSnapshot<SettingsGroup> appSettings, IWebHostEnvironment hostingEnvironment, IConfiguration configuration)
         {
             _appSettings = appSettings.Value;
-            _featureManager = featureManager;
+            _hostingEnvironment = hostingEnvironment;
+            _configuration = configuration;
         }
 
-     
+
         [HttpGet("envs")]
-        public SettingsGroup GetEnvs()
+        public GetEnvsResponse GetEnvs()
         {
-            return _appSettings;
+            int appConfigRefreshInSeconds;
+            if (!int.TryParse(_configuration["app-config-refresh-in-seconds"], out appConfigRefreshInSeconds))
+            {
+                appConfigRefreshInSeconds = 15;
+            }
+            return new GetEnvsResponse { RefreshInSeconds = appConfigRefreshInSeconds, Sentinel = _configuration["Sentinel"], Environment = _hostingEnvironment.EnvironmentName, Settings = _appSettings };
         }
 
-        [HttpGet("features")]
-        public bool Features()
-        {
-            return _featureManager.IsEnabledAsync("feature1").Result;
-        }
 
-        [FeatureGate("feature1")]
-        [HttpGet("feature1")]
-        public bool feature1()
-        {
-            return _featureManager.IsEnabledAsync("feature1").Result;
-        }
+    }
+
+    public class GetEnvsResponse
+    {
+        public int RefreshInSeconds { get; set; }
+        public string Sentinel { get; set; }
+        public string Environment { get; set; }
+        public SettingsGroup Settings { get; set; }
     }
 }

@@ -45,31 +45,51 @@ namespace key_vault_core
                             var settings = config.Build();
                             var oriSettings = new List<IConfigurationSource>(config.Sources);
                             config.Sources.Clear();
-#if DEBUG
-                            var cnstring = settings["appConfigurationConnectionString"];
-#else 
                             var cnstring = settings["appConfigurationEndpoint"];
-#endif
+                            int appConfigRefreshInSeconds;
+                            if (!int.TryParse(settings["app-config-refresh-in-seconds"], out appConfigRefreshInSeconds))
+                            {
+                                appConfigRefreshInSeconds = 15;
+                            }
                             config.AddAzureAppConfiguration(options =>
                             {
 #if DEBUG
-                                options.Connect(cnstring)
+                                options.Connect(new Uri(cnstring), new InteractiveBrowserCredential())
 #else
                                 options.Connect(new Uri(cnstring), new ManagedIdentityCredential())
 #endif
-                                    .ConfigureKeyVault(kv =>
+                                     .ConfigureKeyVault(kv =>
+                                     {
+#if DEBUG
+                                         kv.SetCredential(new InteractiveBrowserCredential());
+#else
+                                         kv.SetCredential(new ManagedIdentityCredential());
+#endif
+
+                                         // this is supopsed to  work in all scenarios if you are logged in the same tenant where app configuration / akv is 
+                                         //https://docs.microsoft.com/en-us/dotnet/api/azure.identity.defaultazurecredential?view=azure-dotnet
+                                         //                                The following credential types if enabled will be tried, in order:
+                                         //                                  EnvironmentCredential
+                                         //                                  ManagedIdentityCredential
+                                         //                                  SharedTokenCacheCredential
+                                         //                                  VisualStudioCredential
+                                         //                                  VisualStudioCodeCredential
+                                         //                                  AzureCliCredential
+                                         //                                  AzurePowerShellCredential
+                                         //                                  InteractiveBrowserCredential
+                                         //options.Connect(new Uri(cnstring), new DefaultAzureCredential())
+
+
+                                     })
+                                    .ConfigureRefresh(refresh =>
                                     {
-                                        kv.SetCredential(new DefaultAzureCredential());
-                                    }).ConfigureRefresh(refresh =>
-                                    {
-                                        refresh.Register("SettingsGroup:Sentinel", refreshAll: true)
-                                               .SetCacheExpiration(TimeSpan.FromSeconds(10));
+                                        refresh.Register("Sentinel", refreshAll: true)
+                                               .SetCacheExpiration(TimeSpan.FromSeconds(appConfigRefreshInSeconds));
                                     })
-                                    .UseFeatureFlags(op =>
-                                    {
-                                        op.Select("feature*"); // to filter on fetaure flags
-                                    });
-                            },optional:false);
+
+                                ;
+
+                            }, optional: false);
 
                             oriSettings.ForEach(s=>
                             {
