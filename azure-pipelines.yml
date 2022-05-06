@@ -30,7 +30,7 @@ steps:
 - task: VSBuild@1
   inputs:
     solution: '$(solution)'
-    msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=FileSystem /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:publishUrl="$(build.artifactStagingDirectory)\key-vault-core" /p:DeployIisAppPath="Default Web Site" /p:runtime=win-x64 /p:self-contained=false'
+    msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=FileSystem /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:publishUrl="$(build.artifactStagingDirectory)\key-vault-core" /p:DeployIisAppPath="Default Web Site" /p:runtime=win-x64 /p:self-contained=false /p:EnvironmentName=__ENVIRONMENT__'
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
 
