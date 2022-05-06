@@ -36,7 +36,12 @@ namespace key_vault_core.Controllers
             {
                 appConfigRefreshInSeconds = 15;
             }
-            return new GetEnvsResponse { RefreshInSeconds= appConfigRefreshInSeconds, Sentinel = _configuration["Sentinel"] , Environment = _hostingEnvironment.EnvironmentName, Settings = _appSettings };
+            return new GetEnvsResponse
+            {
+                RefreshInSeconds= appConfigRefreshInSeconds, Sentinel = _configuration["Sentinel"] , Environment = _hostingEnvironment.EnvironmentName, Settings = _appSettings ,
+                AppConfigUrl = _configuration["appConfigurationEndpoint"]
+
+            };
         }
 
 
@@ -44,6 +49,7 @@ namespace key_vault_core.Controllers
 
     public class GetEnvsResponse
     {
+        public string AppConfigUrl { get; set; }
         public int RefreshInSeconds { get; set; }
         public string Sentinel { get; set; }
         public string Environment { get; set; }
