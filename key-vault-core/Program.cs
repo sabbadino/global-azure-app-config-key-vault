@@ -5,9 +5,11 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Azure.Extensions.AspNetCore.Configuration.Secrets;
 using Azure.Identity;
+using Azure.Messaging.EventGrid.SystemEvents;
 using Azure.Security.KeyVault.Secrets;
 using Microsoft.Extensions.Configuration.AzureAppConfiguration;
 
@@ -28,8 +30,11 @@ namespace key_vault_core
                     webBuilder.ConfigureAppConfiguration((hostingContext, config) =>
                         {
                             var settings = config.Build();
+                            
                             var oriSettings = new List<IConfigurationSource>(config.Sources);
+                            // remove existing providers 
                             config.Sources.Clear();
+
                             var cnstring = settings["appConfigurationEndpoint"];
                             int appConfigRefreshInSeconds;
                             if (!int.TryParse(settings["app-config-refresh-in-seconds"], out appConfigRefreshInSeconds))
@@ -38,18 +43,10 @@ namespace key_vault_core
                             }
                             config.AddAzureAppConfiguration(options =>
                             {
-#if DEBUG
-                                options.Connect(new Uri(cnstring), new InteractiveBrowserCredential())
-#else
-                                options.Connect(new Uri(cnstring), new ManagedIdentityCredential())
-#endif
+                                options.Connect(new Uri(cnstring), new DefaultAzureCredential())
                                      .ConfigureKeyVault(kv =>
                                      {
-#if DEBUG
-                                         kv.SetCredential(new InteractiveBrowserCredential());
-#else
-                                         kv.SetCredential(new ManagedIdentityCredential());
-#endif
+                                         kv.SetCredential(new DefaultAzureCredential());
 
                                          // this is supopsed to  work in all scenarios if you are logged in the same tenant where app configuration / akv is 
                                          //https://docs.microsoft.com/en-us/dotnet/api/azure.identity.defaultazurecredential?view=azure-dotnet
@@ -75,7 +72,7 @@ namespace key_vault_core
                                 ;
 
                             }, optional: false);
-
+                            // Register appSettings/Secret Provideron top 
                             oriSettings.ForEach(s=>
                             {
                                 config.Add(s);
