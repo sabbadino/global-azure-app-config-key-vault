@@ -27,15 +27,27 @@ namespace key_vault_core
                 .ConfigureWebHostDefaults(webBuilder =>
                     webBuilder.ConfigureAppConfiguration((hostingContext, config) =>
                         {
+                            // how to plug AKV as config provider directly 
+                            //var settings = config.Build();
+                            //var keyVaultUrl = settings.GetValue<string>("keyVaultUrl");
+                            //var keyVaultEndpoint = new Uri(keyVaultUrl);
+
+                            //config.AddAzureKeyVault(
+                            //    keyVaultEndpoint,
+                            //    new DefaultAzureCredential(), new AzureKeyVaultConfigurationOptions { ReloadInterval = new TimeSpan(1, 0, 0) });
+
                             var settings = config.Build();
-                            var cnstring = settings["appConfigurationEndpoint"];
-                            int appConfigRefreshInSeconds;
-                            if(!int.TryParse(settings["app-config-refresh-in-seconds"], out appConfigRefreshInSeconds)) {
+                            var connectionString = settings["appConfigurationEndpoint"];
+                            if(!int.TryParse(settings["app-config-refresh-in-seconds"], out var appConfigRefreshInSeconds)) {
                                 appConfigRefreshInSeconds = 15;
                             }
+
+
+
+
                             config.AddAzureAppConfiguration(options =>
                             {
-                                options.Connect(new Uri(cnstring), new DefaultAzureCredential())
+                                options.Connect(new Uri(connectionString), new DefaultAzureCredential())
                                      .ConfigureKeyVault(kv =>
                                      {
                                          kv.SetCredential(new DefaultAzureCredential());
